@@ -22,7 +22,7 @@ ModalBar Perc => dac;
 //BPM to MS
 60000/bpm => float beattime; 
 
-Math.random2(0,1) => int maybeHit;
+Math.random2(0,1) => int maybeHit; // this variable can be used to add variation to the patterns
 
 //Kick Pattern
 [1,0,0,0,0,0,0,0,1,0,maybeHit,1,0,0,0,0] @=> int kickPattrn[];
@@ -34,7 +34,7 @@ Math.random2(0,1) => int maybeHit;
 [1,maybeHit,0,1,0,0,1,0,0,1,0,0,1,0,maybeHit,1] @=> int percPattrn[];
 [60, 63, 65, 67, 68, 70] @=> int percNotes[];
 
-//ModalBar Init Param
+//ModalBar Initial Parameters
 8 => Perc.preset;
 1.5 => Perc.gain;
 0.9 => Perc.strikePosition;
@@ -74,20 +74,20 @@ fun void Kicks() {
     0 => int counter;
     beattime/2 => float timer;
     while (true) {    
-        counter % 16 => int beat;
+        counter % 16 => int beat; 
         if (beat==0) {
             Math.random2(0,1) => int maybeHit;
         } 
         if (kickPattrn[beat]==1) {
             Math.random2f(0.9, 1.1) => Kick.rate;
-            0 => Kick.pos;
+            0 => Kick.pos; //Triggers the Kick
         }
         if (snarePattrn[beat]==1) {
-            0 => Snare.pos;
+            0 => Snare.pos; //Triggers the Snare
         }
         if (percPattrn[beat]==1) {
-            Std.mtof(percNotes[Math.random2(0, (percNotes.cap()-1))]) => Perc.freq;
-            1 => Perc.strike;
+            Std.mtof(percNotes[Math.random2(0, (percNotes.cap()-1))]) => Perc.freq; //Sets the Perc freq  by randomly selecting one of the notes in the percNotes array
+            1 => Perc.strike; //Trigger the Perc
         }
         counter++;
         timer::ms => now;
@@ -97,8 +97,8 @@ fun void Kicks() {
 
 
 // MAIN PROGRAM
-spork ~hihats();
+spork ~hihats(); //Starts generating Hihat patterns
 beattime*4::ms => now;
-spork ~Kicks();
+spork ~Kicks(); //Starts the Kick, Snare and Perc patterns.
 
-while (true) 1::second => now;
+while (true) 1::second => now; // Infinite Loop
